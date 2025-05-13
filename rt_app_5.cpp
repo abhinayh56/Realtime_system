@@ -1,16 +1,45 @@
 #include <iostream>
 #include <pthread.h>
+#include <sched.h>
 #include <time.h>
 #include <unistd.h>
 #include <cstring>
 #include <cmath>
-#include <sched.h>
+#include <vector>
+#include <string.h>
 
 #define NSEC_PER_SEC 1000000000L
 
 const int frequency = 1000; // Target frequency in Hz
 const long period_ns = NSEC_PER_SEC / frequency;
 const int report_interval = 1000; // Report after this many iterations
+
+void pin_thread_to_cores(const std::vector<int> &core_ids)
+{
+    cpu_set_t cpuset;
+    CPU_ZERO(&cpuset);
+
+    for (int core_id : core_ids)
+    {
+        CPU_SET(core_id, &cpuset);
+    }
+
+    pthread_t current_thread = pthread_self();
+    int ret = pthread_setaffinity_np(current_thread, sizeof(cpu_set_t), &cpuset);
+    if (ret != 0)
+    {
+        std::cerr << "Error setting CPU affinity: " << strerror(ret) << std::endl;
+    }
+    else
+    {
+        std::cout << "Thread pinned to cores: ";
+        for (int core_id : core_ids)
+        {
+            std::cout << core_id << " ";
+        }
+        std::cout << std::endl;
+    }
+}
 
 inline long timespec_to_ns(const timespec &ts)
 {
@@ -29,6 +58,8 @@ void timespec_add_ns(timespec &ts, long ns)
 
 void *rt_task(void *arg)
 {
+    pin_thread_to_cores({5});
+
     struct timespec next, now;
     clock_gettime(CLOCK_MONOTONIC, &next);
 
