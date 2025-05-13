@@ -1,17 +1,39 @@
 #include <iostream>
-#include <unistd.h>
 #include <pthread.h>
 #include <sched.h>
+#include <unistd.h>
+
+#define NSEC_PER_SEC 1000000000L
+#define FREQ 1000
+
+const long period_ns = NSEC_PER_SEC / FREQ;
+
+void timespec_add_ns(timespec &ts, long ns)
+{
+    ts.tv_nsec += ns;
+    while (ts.tv_nsec >= NSEC_PER_SEC)
+    {
+        ts.tv_nsec -= NSEC_PER_SEC;
+        ts.tv_nsec++;
+    }
+}
 
 void *rt_task(void *arg)
 {
+    struct timespec next;
+    clock_gettime(CLOCK_MONOTONIC, &next);
+
     while (true)
     {
-        std::cout << "Running rt app 1" << std::endl;
-        usleep(1000000);
+        std::cout << "Running rt app 2" << std::endl;
+
+        timespec_add_ns(next, period_ns);
+        clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &next, nullptr);
     }
+
     return nullptr;
 }
+
 
 int main()
 {
@@ -29,7 +51,7 @@ int main()
     int ret = pthread_create(&thread, &attr, rt_task, nullptr);
     if(ret != 0)
     {
-        perror("pthread_create");
+        std::cerr << "Failed to create thread: " << ret << std::endl;
         return 1;
     }
 
