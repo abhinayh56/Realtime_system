@@ -107,7 +107,7 @@ int main() {
     std::signal(SIGINT, signal_handler);
 
     int rt_core = 5;       // Change based on your isolated CPU
-    int rt_priority = 80;  // SCHED_FIFO priority (1-99)
+    int rt_priority = 99;  // SCHED_FIFO priority (1-99)
     int frequency = 500;   // Loop frequency in Hz
 
     std::cout << "Starting real-time loop on core " << rt_core
