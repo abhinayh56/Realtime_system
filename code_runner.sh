@@ -6,8 +6,9 @@
 # g++ rt_app_6.cpp -o rt_app -pthread
 # g++ rt_app_7.cpp -o rt_app -pthread
 # g++ rt_app_8.cpp -o rt_app -pthread
-g++ rt_app_9.cpp -o rt_app -pthread
+# g++ rt_app_9.cpp -o rt_app -pthread
+g++ rt_app_10.cpp -o rt_app -pthread
 
 
-# sudo ./rt_app
-sudo chrt -f 99 taskset -c 0 ./rt_app
+sudo ./rt_app
+# sudo chrt -f 99 taskset -c 0 ./rt_app

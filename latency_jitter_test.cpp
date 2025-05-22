@@ -10,7 +10,7 @@
 #include <sys/mman.h>
 #include <pthread.h>
 
-constexpr int RT_PRIORITY   = 80;       // SCHED_FIFO real-time priority
+constexpr int RT_PRIORITY   = 85;       // SCHED_FIFO real-time priority
 constexpr int NUM_ITERATIONS = 5000;
 constexpr int INTERVAL_US    = 1000;    // 1ms (1000 microseconds)
 
